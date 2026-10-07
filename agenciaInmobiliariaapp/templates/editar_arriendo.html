@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Arriendo</title>
+</head>
+<body>
+    <h1>Editar Arriendo</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Renderiza los campos precargados con la información del arriendo -->
+        {{ form.as_p }}
+
+        <button type="submit">Guardar Cambios</button>
+        <a href="{% url 'listar_arriendos' %}">Cancelar</a>
+    </form>
+</body>
+</html>

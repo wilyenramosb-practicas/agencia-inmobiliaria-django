@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Arriendos</title>
+</head>
+<body>
+    <h1>Lista de Arriendos Registrados</h1>
+
+    <a href="{% url 'crear_arriendo' %}">Registrar Nuevo Arriendo</a>
+    <hr>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Tipo</th>
+                <th>Dirección</th>
+                <th>Precio</th>
+                <th>Contacto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Fíjate que aquí dice 'arriendos' en plural -->
+            {% for a in arriendos %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td>{{ a.descripcion }}</td>
+                <td>{{ a.tipo_inmueble }}</td>
+                <td>{{ a.direccion }}</td>
+                <td>${{ a.precio }}</td>
+                <td>{{ a.correo_contacto }}</td>
+                <td>
+                    <a href="{% url 'editar_arriendo' a.id %}">Editar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No hay arriendos registrados en la base de datos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
