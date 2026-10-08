@@ -6,4 +6,5 @@ urlpatterns = [
     path('listar/', views.listar_arriendos, name='listar_arriendos'),
     path('crear/', views.crear_arriendo, name='crear_arriendo'),
     path('editar/<int:id>/', views.editar_arriendo, name='editar_arriendo'),
+    path('eliminar/<int:id>/', views.eliminar_arriendo, name='eliminar_arriendo')
 ]

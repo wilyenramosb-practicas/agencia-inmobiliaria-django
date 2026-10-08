@@ -28,3 +28,11 @@ def listar_arriendos(request):
     todos_los_arriendos = Arriendo.objects.all()
     # Enviamos 'arriendos' (en plural) al HTML
     return render(request, 'listar_arriendo.html', {'arriendos': todos_los_arriendos})
+
+def eliminar_arriendo(request,id):
+    arriendo = Arriendo.objects.get(id=id)
+
+    if request.method == 'POST':
+        arriendo.delete()
+        return redirect('listar_arriendos')
+    return render(request, 'eliminar_arriendo.html', {'arriendos': arriendo})
