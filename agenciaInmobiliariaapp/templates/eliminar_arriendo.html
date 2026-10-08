@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar Arriendo</title>
-</head>
-<body>
-    <h1>¿Estás seguro de que deseas eliminar este arriendo?</h1>
+{% extends 'base.html' %}
 
-    <p><strong>Descripción:</strong> {{ arriendo.descripcion }}</p>
-    <p><strong>Dirección:</strong> {{ arriendo.direccion }}</p>
-    <p><strong>Precio:</strong> ${{ arriendo.precio }}</p>
+{% block title %}Confirmar Eliminación{% endblock %}
 
-    <!-- Formulario POST necesario para realizar el borrado seguro -->
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Sí, eliminar</button>
-        <a href="{% url 'listar_arriendos' %}">Cancelar</a>
-    </form>
-</body>
-</html>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 border-top border-danger border-4">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3"></i>
+                <h4 class="fw-bold mb-3">¿Deseas eliminar este arriendo?</h4>
+                <p class="text-muted mb-4">Esta acción no se puede deshacer.</p>
+
+                <!-- AQUÍ SE MUESTRAN LOS DATOS -->
+                <div class="bg-light p-3 rounded mb-4 text-start">
+                    <p class="mb-1"><strong>ID:</strong> #{{ arriendo.id }}</p>
+                    <p class="mb-1"><strong>Descripción:</strong> {{ arriendo.descripcion }}</p>
+                    <p class="mb-1"><strong>Dirección:</strong> {{ arriendo.direccion }}</p>
+                    <p class="mb-0"><strong>Precio:</strong> ${{ arriendo.precio }}</p>
+                </div>
+
+                <form method="POST" class="d-flex justify-content-center gap-2">
+                    {% csrf_token %}
+                    <a href="{% url 'listar_arriendos' %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Sí, Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

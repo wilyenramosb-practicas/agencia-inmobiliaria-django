@@ -29,10 +29,13 @@ def listar_arriendos(request):
     # Enviamos 'arriendos' (en plural) al HTML
     return render(request, 'listar_arriendo.html', {'arriendos': todos_los_arriendos})
 
-def eliminar_arriendo(request,id):
-    arriendo = Arriendo.objects.get(id=id)
+def eliminar_arriendo(request, id):
+    # Recupera el objeto exacto desde MySQL
+    arriendo_obj = Arriendo.objects.get(id=id)
 
     if request.method == 'POST':
-        arriendo.delete()
+        arriendo_obj.delete()
         return redirect('listar_arriendos')
-    return render(request, 'eliminar_arriendo.html', {'arriendos': arriendo})
+
+    # Fíjate en la clave del diccionario: 'arriendo'
+    return render(request, 'eliminar_arriendo.html', {'arriendo': arriendo_obj})

@@ -1,19 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Arriendo</title>
-</head>
-<body>
-    <h1>Registrar nuevo arriendo</h1>
-    <form method="POST">
-        {% csrf_token %}
+{% extends 'base.html' %}
 
-        {{form.as_p}}
+{% block title %}Registrar Arriendo{% endblock %}
 
-        <button type="submit">Guardar</button>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Arriendo</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
 
-    </form>
-</body>
-</html>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'listar_arriendos' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i> Guardar Arriendo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

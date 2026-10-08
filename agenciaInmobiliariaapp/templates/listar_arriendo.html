@@ -1,51 +1,58 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mostrar Arriendos</title>
-</head>
-<body>
-    <h1>Lista de Arriendos Registrados</h1>
+{% extends 'base.html' %}
 
-    <a href="{% url 'crear_arriendo' %}">Registrar Nuevo Arriendo</a>
-    <hr>
+{% block title %}Gestión de Arriendos{% endblock %}
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Descripción</th>
-                <th>Tipo</th>
-                <th>Dirección</th>
-                <th>Precio</th>
-                <th>Contacto</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Fíjate que aquí dice 'arriendos' en plural -->
-            {% for a in arriendos %}
-            <tr>
-                <td>{{ a.id }}</td>
-                <td>{{ a.descripcion }}</td>
-                <td>{{ a.tipo_inmueble }}</td>
-                <td>{{ a.direccion }}</td>
-                <td>${{ a.precio }}</td>
-                <td>{{ a.correo_contacto }}</td>
-                <td>
-                    <td>
-                        <a href="{% url 'editar_arriendo' a.id %}">Editar</a> | 
-                        <a href="{% url 'eliminar_arriendo' a.id %}">Eliminar</a>
-                    </td>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7">No hay arriendos registrados en la base de datos.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 text-primary fw-bold"><i class="bi bi-list-task me-2"></i>Lista de Arriendos</h4>
+        <a href="{% url 'crear_arriendo' %}" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Registrar Arriendo
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ID</th>
+                        <th>Descripción</th>
+                        <th>Tipo</th>
+                        <th>Dirección</th>
+                        <th>Precio</th>
+                        <th>Contacto</th>
+                        <th class="text-end pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in arriendos %}
+                    <tr>
+                        <td class="ps-3 fw-bold text-secondary">#{{ a.id }}</td>
+                        <td>{{ a.descripcion }}</td>
+                        <td><span class="badge bg-info text-dark">{{ a.tipo_inmueble }}</span></td>
+                        <td>{{ a.direccion }}</td>
+                        <td class="fw-bold text-success">${{ a.precio }}</td>
+                        <td>{{ a.correo_contacto }}</td>
+                        <td class="text-end pe-3">
+                            <a href="{% url 'editar_arriendo' a.id %}" class="btn btn-warning btn-sm me-1">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_arriendo' a.id %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            No hay arriendos registrados actualmente.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
