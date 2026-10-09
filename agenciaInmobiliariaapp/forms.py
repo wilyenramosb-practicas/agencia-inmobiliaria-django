@@ -23,7 +23,7 @@ class FormEditar(forms.ModelForm):
     class Meta:
         model = Arriendo
         fields = ['descripcion','precio','gastos_comunes','disponible','correo_contacto'] #especificamos los campos que se pueden editar
-        def clean(self):
+    def clean(self):
                 cleaned_data = super().clean() #obtenemos el diccionario completo de datos procesados
         
                 precio = cleaned_data.get('precio')
@@ -31,7 +31,7 @@ class FormEditar(forms.ModelForm):
         
                 if precio is not None and gastos_comunes is not None:
                     if precio <= 0 or gastos_comunes <= 0:
-                        raise forms.ValidationError("los campos precio, gasto comun")
+                        raise forms.ValidationError("los campos precio, gasto comun deben ser mayor a cero")
                 else:
                     raise forms.ValidationError("todos los campos son obligatorios")
                 return cleaned_data
