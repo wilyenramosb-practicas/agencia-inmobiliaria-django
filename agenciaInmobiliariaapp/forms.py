@@ -1,54 +1,63 @@
-import re
 from django import forms
 from .models import Arriendo
 
 class FormCrear(forms.ModelForm):
     class Meta:
         model = Arriendo
-        fields = '__all__'  # Todos los campos para la creación
+        fields = '__all__'
 
-    # 1. Transformación automática del campo dirección a MAYÚSCULAS
+    # Transformación automática de la dirección a MAYÚSCULAS
     def clean_direccion(self):
         direccion = self.cleaned_data.get('direccion')
         if direccion:
             return direccion.strip().upper()
         return direccion
 
-    # 2. Validaciones de negocio y lógica cruzada
     def clean(self):
         cleaned_data = super().clean()
         
+        # 1. Si no viene tipo_inmueble en el formulario (caso FormEditar), lo obtenemos de la instancia guardada
         tipo_inmueble = cleaned_data.get('tipo_inmueble')
+        if not tipo_inmueble and self.instance and self.instance.pk:
+            tipo_inmueble = self.instance.tipo_inmueble
+
+        # 2. Si tampoco viene direccion (caso FormEditar), la recuperamos de la instancia
         direccion = cleaned_data.get('direccion')
+        if not direccion and self.instance and self.instance.pk:
+            direccion = self.instance.direccion
+
+        numero_depto = cleaned_data.get('numero_depto')
         precio = cleaned_data.get('precio')
         gastos_comunes = cleaned_data.get('gastos_comunes')
 
-        # Validar precio y gastos comunes
+        # A) Validaciones de montos
         if precio is not None and precio <= 0:
             self.add_error('precio', "El precio del arriendo debe ser mayor a $0.")
 
-        if gastos_comunes is not None and gastos_comunes < 0:
-            self.add_error('gastos_comunes', "Los gastos comunes no pueden ser un valor negativo.")
+        if gastos_comunes is not None and gastos_comunes <= 0:
+            self.add_error('gastos_comunes', "Los gastos comunes no pueden ser un valor negativo o igual a cero.")
 
-        # Reglas para Dirección y Tipo de Inmueble
-        if tipo_inmueble and direccion:
+        # B) Exigencia de N° Depto si el tipo es DEPARTAMENTO (verificando que tipo_inmueble no sea None)
+        if tipo_inmueble and tipo_inmueble.upper() == 'DEPARTAMENTO':
+            if not numero_depto:
+                self.add_error('numero_depto', "Debe especificar el número o bloque del departamento.")
+
+        # C) Control de duplicidad
+        if direccion:
+            coincidencias = Arriendo.objects.filter(
+                direccion=direccion, 
+                numero_depto=numero_depto
+            )
             
-            # Exigir número/unidad si es un DEPARTAMENTO
-            if tipo_inmueble.upper() == 'DEPARTAMENTO':
-                tiene_unidad = re.search(r'(DEPTO|DPTO|PISO|N°|NUMERO|\b\d{2,4}\b)', direccion)
-                if not tiene_unidad:
-                    self.add_error(
-                        'direccion', 
-                        "Para un departamento es obligatorio incluir el número de unidad en la dirección (Ej: 'AV. BRASIL 123, DEPTO 402')."
-                    )
-
-            # Control de duplicidad en la BD
-            coincidencias = Arriendo.objects.filter(direccion=direccion)
             if self.instance and self.instance.pk:
                 coincidencias = coincidencias.exclude(pk=self.instance.pk)
 
-            if tipo_inmueble.upper() == 'CASA' and coincidencias.exists():
-                self.add_error('direccion', f"La casa registrada en '{direccion}' ya existe en la base de datos.")
+            if coincidencias.exists():
+                self.add_error(
+                    'numero_depto', 
+                    f"Ya existe un registro en '{direccion}' " + 
+                    (f"depto {numero_depto}" if numero_depto else "") + "."
+                )
 
         return cleaned_data
 
@@ -56,7 +65,4 @@ class FormCrear(forms.ModelForm):
 class FormEditar(FormCrear):
     class Meta:
         model = Arriendo
-        # Especificamos únicamente los campos permitidos para la edición
-        fields = ['descripcion', 'precio', 'gastos_comunes', 'disponible', 'correo_contacto']
-
-    # Hereda automáticamente las funciones clean_direccion() y clean() de FormCrear
+        fields = ['descripcion', 'numero_depto', 'precio', 'gastos_comunes', 'disponible', 'correo_contacto']
